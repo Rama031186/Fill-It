@@ -5,7 +5,7 @@
  */
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'fillForm') {
+  if (message.action === 'fillForm' || message.action === 'fillGeneral') {
     // Relay fill request from popup → active tab content script
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (!tabs || tabs.length === 0) {

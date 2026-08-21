@@ -753,3 +753,14 @@ body {
 
 /* ── Hidden ── */
 .hidden { display: none !important; }
+
+/* ── Save Indicator (General Details) ── */
+.save-indicator {
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--success);
+  gap: 4px;
+  animation: fadeIn 0.2s ease;
+}

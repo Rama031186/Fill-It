@@ -28,6 +28,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3 2.7-5.5 6-5.5"/><circle cx="17" cy="8" r="3"/><path d="M22 20c0-3-2.7-5.5-6-5.5"/><path d="M9 20h6"/></svg>
         Family Groups
       </button>
+      <button class="nav-btn" data-tab="general" id="nav-general">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        General Details
+      </button>
       <button class="nav-btn" data-tab="settings" id="nav-settings">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41"/></svg>
         Settings
@@ -98,6 +102,67 @@
         <div class="empty-icon">👨‍👩‍👧‍👦</div>
         <div class="empty-title">No groups yet</div>
         <div class="empty-desc">Create a family group to organise your profiles</div>
+      </div>
+    </section>
+
+    <!-- ── GENERAL DETAILS TAB ── -->
+    <section class="tab-panel" id="tab-general">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">General Details</h1>
+          <p class="page-subtitle">Booking-level details filled once per booking (Gothram, Email, Address)</p>
+        </div>
+      </div>
+
+      <div class="settings-card" style="max-width:560px;">
+        <p class="setting-desc" style="margin-bottom:20px;padding:12px 14px;background:rgba(245,158,11,0.08);border-radius:8px;border-left:3px solid var(--gold,#f59e0b);line-height:1.6;">
+          These details fill the <strong>General Details</strong> section of the TTD booking form — fields like Gothram, Email, City, State, Country and Pincode that apply to the entire booking (not per-pilgrim). Click <strong>"Fill General Details"</strong> in the popup to autofill them.
+        </p>
+
+        <form id="form-general" autocomplete="off" novalidate>
+          <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+
+            <div class="form-group" style="grid-column:1/-1;">
+              <label class="form-label">Gothram</label>
+              <input class="form-input" type="text" id="gd-gothram" placeholder="e.g. Bharadwaja" />
+            </div>
+
+            <div class="form-group" style="grid-column:1/-1;">
+              <label class="form-label">Email Address <span class="required">*</span></label>
+              <input class="form-input" type="email" id="gd-email" placeholder="your@email.com" />
+              <span class="form-error" id="err-gd-email"></span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">City <span class="required">*</span></label>
+              <input class="form-input" type="text" id="gd-city" placeholder="e.g. Vijayawada" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">State <span class="required">*</span></label>
+              <input class="form-input" type="text" id="gd-state" placeholder="e.g. Andhra Pradesh" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Country</label>
+              <input class="form-input" type="text" id="gd-country" placeholder="India" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Pincode <span class="required">*</span></label>
+              <input class="form-input" type="tel" id="gd-pincode" maxlength="6" placeholder="6-digit pincode" />
+            </div>
+
+          </div>
+
+          <div style="display:flex;gap:10px;margin-top:8px;">
+            <button type="submit" class="btn-primary" id="btn-save-general">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px;"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save General Details
+            </button>
+            <span class="save-indicator hidden" id="gd-saved">✓ Saved</span>
+          </div>
+        </form>
       </div>
     </section>
 

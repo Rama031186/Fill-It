@@ -7,24 +7,27 @@ import {
   getProfiles, saveProfile, deleteProfile, duplicateProfile,
   getGroups, saveGroup, deleteGroup,
   getSettings, saveSettings,
+  getGeneralDetails, saveGeneralDetails,
 } from '../shared/storage.js';
 
 // ─── State ───────────────────────────────────────────────────────────────────
 
-let allProfiles = [];
-let allGroups   = [];
-let settings    = {};
+let allProfiles    = [];
+let allGroups      = [];
+let settings       = {};
+let generalDetails = {};
 let confirmCallback = null;
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 async function init() {
-  [allProfiles, allGroups, settings] = await Promise.all([
-    getProfiles(), getGroups(), getSettings(),
+  [allProfiles, allGroups, settings, generalDetails] = await Promise.all([
+    getProfiles(), getGroups(), getSettings(), getGeneralDetails(),
   ]);
   renderProfiles();
   renderGroups();
   renderSettings();
+  renderGeneralDetails();
   populateGroupSelects();
   attachListeners();
 
@@ -93,6 +96,42 @@ function attachListeners() {
       closeConfirm();
     }
   });
+
+  // General Details form
+  document.getElementById('form-general')?.addEventListener('submit', handleGeneralDetailsSave);
+}
+
+// ─── General Details ──────────────────────────────────────────────────────────
+
+function renderGeneralDetails() {
+  const gd = generalDetails;
+  const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+  setVal('gd-gothram', gd.gothram);
+  setVal('gd-email',   gd.email);
+  setVal('gd-city',    gd.city);
+  setVal('gd-state',   gd.state);
+  setVal('gd-country', gd.country);
+  setVal('gd-pincode', gd.pincode);
+}
+
+async function handleGeneralDetailsSave(e) {
+  e.preventDefault();
+  const getVal = (id) => document.getElementById(id)?.value.trim() || '';
+  const updates = {
+    gothram: getVal('gd-gothram'),
+    email:   getVal('gd-email'),
+    city:    getVal('gd-city'),
+    state:   getVal('gd-state'),
+    country: getVal('gd-country'),
+    pincode: getVal('gd-pincode'),
+  };
+  await saveGeneralDetails(updates);
+  generalDetails = { ...generalDetails, ...updates };
+  const indicator = document.getElementById('gd-saved');
+  if (indicator) {
+    indicator.classList.remove('hidden');
+    setTimeout(() => indicator.classList.add('hidden'), 2500);
+  }
 }
 
 function switchTab(tab) {

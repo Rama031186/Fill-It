@@ -701,6 +701,41 @@ body {
   padding: 10px 16px 14px;
   background: var(--bg-base);
   border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Secondary: Fill General Details button ── */
+.btn-fill-general {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-fill-general svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+.btn-fill-general:not(:disabled):hover {
+  border-color: rgba(245, 158, 11, 0.4);
+  color: var(--gold);
+  background: rgba(245, 158, 11, 0.06);
+}
+
+.btn-fill-general:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 
 /* ── Result Panel ── */

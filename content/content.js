@@ -72,15 +72,133 @@ const TTD_FIELDS = [
 
 // ─── Message Listener ─────────────────────────────────────────────────────────
 
+// ─── General Details Field Definitions ───────────────────────────────────────
+// These are booking-level (single occurrence) fields — not per-pilgrim.
+
+const GENERAL_FIELDS = [
+  {
+    key:       'gothram',
+    labelAttr: 'Gothram',
+    names:     ['pilgrimGothram'],
+    label:     'Gothram',
+    type:      'text',
+  },
+  {
+    key:       'email',
+    labelAttr: 'Email Address',
+    names:     ['pilgrimEmail'],
+    label:     'Email Address',
+    type:      'text',
+  },
+  {
+    key:       'city',
+    labelAttr: 'City',
+    names:     ['pilgrimCity'],
+    label:     'City',
+    type:      'text',
+  },
+  {
+    key:       'state',
+    labelAttr: 'State',
+    names:     ['pilgrimState'],
+    label:     'State',
+    type:      'text',
+  },
+  {
+    key:       'country',
+    labelAttr: 'Country',
+    names:     ['pilgrimCountry'],
+    label:     'Country',
+    type:      'text',
+  },
+  {
+    key:       'pincode',
+    labelAttr: 'Pincode',
+    names:     ['pilgrimPincode'],
+    label:     'Pincode',
+    type:      'text',
+  },
+];
+
+// ─── Message Listener ─────────────────────────────────────────────────────────
+
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  if (message.action !== 'fillForm') return false;
+  if (message.action === 'fillForm') {
+    fillForm(message.profiles, message.settings)
+      .then(sendResponse)
+      .catch((err) => sendResponse({ success: false, error: String(err?.message || err) }));
+    return true;
+  }
 
-  fillForm(message.profiles, message.settings)
-    .then(sendResponse)
-    .catch((err) => sendResponse({ success: false, error: String(err?.message || err) }));
+  if (message.action === 'fillGeneral') {
+    fillGeneralForm(message.generalDetails, message.settings)
+      .then(sendResponse)
+      .catch((err) => sendResponse({ success: false, error: String(err?.message || err) }));
+    return true;
+  }
 
-  return true; // keep channel open for async response
+  return false;
 });
+
+// ─── Fill General Details Form ────────────────────────────────────────────────
+
+async function fillGeneralForm(generalDetails, settings = {}) {
+  const { skipFilledFields = true, fillDelay = 200 } = settings;
+  const filled = [], skipped = [], failed = [];
+
+  for (const field of GENERAL_FIELDS) {
+    const value = generalDetails[field.key];
+    if (value === undefined || value === null || value === '') continue;
+
+    await sleep(fillDelay);
+
+    try {
+      // General fields are single-occurrence — find the first matching input (no index)
+      const el = getGeneralInput(field);
+      if (!el) { failed.push(field.label); continue; }
+
+      if (skipFilledFields && el.value.trim() !== '') {
+        skipped.push(field.label + ' (already filled)');
+        continue;
+      }
+
+      setReactValue(el, String(value));
+      filled.push(field.label);
+    } catch (err) {
+      console.warn('[TTD Autofill] General field error:', field.label, err);
+      failed.push(field.label);
+    }
+  }
+
+  return { success: true, filled, skipped, failed };
+}
+
+/**
+ * Finds a single (non-index) general input using the same label-first strategy
+ * as getInputAt(), but returns just the first matching element.
+ */
+function getGeneralInput(field) {
+  // Strategy 1: label attribute
+  if (field.labelAttr) {
+    const el = document.querySelector(`input.floating-input[label="${field.labelAttr}"]`);
+    if (el && el.type !== 'hidden') return el;
+  }
+  // Strategy 2: name attribute variants
+  for (const name of (field.names || [])) {
+    const el = document.querySelector(`input.floating-input[name="${name}"]`);
+    if (el && el.type !== 'hidden') return el;
+  }
+  // Strategy 3: adjacent label text
+  if (field.labelAttr) {
+    const target = field.labelAttr.toLowerCase();
+    for (const el of document.querySelectorAll('input.floating-input')) {
+      if (el.type === 'hidden') continue;
+      const lbl = el.parentElement?.querySelector('label');
+      if (lbl && lbl.textContent.trim().toLowerCase().includes(target)) return el;
+    }
+  }
+  return null;
+}
 
 // ─── Main Orchestrator ────────────────────────────────────────────────────────
 

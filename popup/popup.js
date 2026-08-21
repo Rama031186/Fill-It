@@ -3,14 +3,15 @@
  * Two-mode profile selection: By Group | Individual
  */
 
-import { getProfiles, getGroups, getSettings } from '../shared/storage.js';
+import { getProfiles, getGroups, getSettings, getGeneralDetails } from '../shared/storage.js';
 
 // ─── State ────────────────────────────────────────────────────────────────────
 
-let allProfiles = [];
-let allGroups   = [];
-let settings    = {};
-let selectedIds = new Set();
+let allProfiles    = [];
+let allGroups      = [];
+let settings       = {};
+let generalDetails = {};
+let selectedIds    = new Set();
 let activeGroup = '';          // individual mode: current group tab filter
 let currentMode = 'group';     // 'group' | 'individual'
 let isOnTTDPage = false;
@@ -18,8 +19,8 @@ let isOnTTDPage = false;
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 async function init() {
-  [allProfiles, allGroups, settings] = await Promise.all([
-    getProfiles(), getGroups(), getSettings(),
+  [allProfiles, allGroups, settings, generalDetails] = await Promise.all([
+    getProfiles(), getGroups(), getSettings(), getGeneralDetails(),
   ]);
 
   await checkCurrentPage();
@@ -305,6 +306,11 @@ function updateSelectionUI() {
   const fillBtn = document.getElementById('btn-fill');
   fillBtn.disabled = count === 0 || !isOnTTDPage;
 
+  // Fill General Details button — enabled when on TTD page and at least one value saved
+  const generalBtn = document.getElementById('btn-fill-general');
+  const hasGeneralData = Object.values(generalDetails).some((v) => v && v.toString().trim() !== '');
+  generalBtn.disabled = !isOnTTDPage || !hasGeneralData;
+
   // Live count on the Fill button
   if (!fillBtn.classList.contains('loading')) {
     fillBtn.innerHTML = `
@@ -368,8 +374,39 @@ function attachListeners() {
     }
   });
 
-  // Fill button
+  // Fill button (pilgrims)
   document.getElementById('btn-fill').addEventListener('click', handleFill);
+
+  // Fill General Details button
+  document.getElementById('btn-fill-general').addEventListener('click', handleFillGeneral);
+}
+
+// ─── Fill General Details ─────────────────────────────────────────────────────
+
+async function handleFillGeneral() {
+  const btn = document.getElementById('btn-fill-general');
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = `
+    <div class="spinner" style="width:13px;height:13px;border-width:2px;border-color:rgba(245,158,11,0.2);border-top-color:var(--gold);"></div>
+    Filling…
+  `;
+
+  try {
+    const response = await chrome.runtime.sendMessage({
+      action: 'fillGeneral',
+      generalDetails,
+      settings,
+    });
+    showResult(response);
+  } catch (err) {
+    showResult({ success: false, error: err.message || 'Unexpected error.' });
+  } finally {
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.innerHTML = originalHTML;
+    }, 4000);
+  }
 }
 
 // ─── Fill ─────────────────────────────────────────────────────────────────────

@@ -5,9 +5,10 @@
  */
 
 const STORAGE_KEYS = {
-  PROFILES: 'ttd_profiles',
-  GROUPS: 'ttd_groups',
-  SETTINGS: 'ttd_settings',
+  PROFILES:        'ttd_profiles',
+  GROUPS:          'ttd_groups',
+  SETTINGS:        'ttd_settings',
+  GENERAL_DETAILS: 'ttd_general_details',
 };
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -180,13 +181,44 @@ export async function saveSettings(updates) {
   await set({ [STORAGE_KEYS.SETTINGS]: { ...current, ...updates } });
 }
 
+// ─── General Details ─────────────────────────────────────────────────────────
+
+const DEFAULT_GENERAL_DETAILS = {
+  gothram: '',
+  email:   '',
+  city:    '',
+  state:   '',
+  country: 'India',
+  pincode: '',
+};
+
+/**
+ * Returns the saved general details (merged with defaults).
+ * These are booking-level fields (Gothram, Email, City, State, Country, Pincode).
+ * @returns {Promise<Object>}
+ */
+export async function getGeneralDetails() {
+  const result = await get(STORAGE_KEYS.GENERAL_DETAILS);
+  return { ...DEFAULT_GENERAL_DETAILS, ...(result[STORAGE_KEYS.GENERAL_DETAILS] || {}) };
+}
+
+/**
+ * Saves (partial update) general details.
+ * @param {Object} updates
+ */
+export async function saveGeneralDetails(updates) {
+  const current = await getGeneralDetails();
+  await set({ [STORAGE_KEYS.GENERAL_DETAILS]: { ...current, ...updates } });
+}
+
 // ─── Export all data (for debugging / future backup) ────────────────────────
 
 export async function exportAllData() {
-  const [profiles, groups, settings] = await Promise.all([
+  const [profiles, groups, settings, generalDetails] = await Promise.all([
     getProfiles(),
     getGroups(),
     getSettings(),
+    getGeneralDetails(),
   ]);
-  return { profiles, groups, settings, exportedAt: new Date().toISOString() };
+  return { profiles, groups, settings, generalDetails, exportedAt: new Date().toISOString() };
 }
