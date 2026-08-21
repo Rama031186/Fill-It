@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TTD Smart Autofill — Manage Profiles</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <!-- ── Sidebar Navigation ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="../icons/icon48.png" alt="TTD Smart Autofill" class="logo-img" />
+      <div>
+        <div class="logo-title">TTD Smart</div>
+        <div class="logo-sub">Autofill</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-btn active" data-tab="profiles" id="nav-profiles">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Pilgrim Profiles
+      </button>
+      <button class="nav-btn" data-tab="groups" id="nav-groups">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3 2.7-5.5 6-5.5"/><circle cx="17" cy="8" r="3"/><path d="M22 20c0-3-2.7-5.5-6-5.5"/><path d="M9 20h6"/></svg>
+        Family Groups
+      </button>
+      <button class="nav-btn" data-tab="settings" id="nav-settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41"/></svg>
+        Settings
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="version-badge">v1.0.0</div>
+    </div>
+  </aside>
+
+  <!-- ── Main Content ── -->
+  <main class="main-content" id="main-content">
+
+    <!-- ── PROFILES TAB ── -->
+    <section class="tab-panel active" id="tab-profiles">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Pilgrim Profiles</h1>
+          <p class="page-subtitle">Store details for yourself and your family members</p>
+        </div>
+        <button class="btn-primary" id="btn-add-profile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          Add Profile
+        </button>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <div class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="search" id="profile-search" class="search-input" placeholder="Search profiles…" />
+        </div>
+        <select id="group-filter" class="filter-select">
+          <option value="">All Groups</option>
+        </select>
+      </div>
+
+      <!-- Profile list -->
+      <div class="profile-grid" id="profile-grid">
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="empty-state hidden" id="profiles-empty">
+        <div class="empty-icon">🙏</div>
+        <div class="empty-title">No profiles yet</div>
+        <div class="empty-desc">Add your first pilgrim profile to get started</div>
+        <button class="btn-primary" id="btn-add-profile-empty">Add Profile</button>
+      </div>
+    </section>
+
+    <!-- ── GROUPS TAB ── -->
+    <section class="tab-panel" id="tab-groups">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Family Groups</h1>
+          <p class="page-subtitle">Organise pilgrims into family groups for quick selection</p>
+        </div>
+        <button class="btn-primary" id="btn-add-group">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          New Group
+        </button>
+      </div>
+
+      <div class="group-list" id="group-list"></div>
+
+      <div class="empty-state hidden" id="groups-empty">
+        <div class="empty-icon">👨‍👩‍👧‍👦</div>
+        <div class="empty-title">No groups yet</div>
+        <div class="empty-desc">Create a family group to organise your profiles</div>
+      </div>
+    </section>
+
+    <!-- ── SETTINGS TAB ── -->
+    <section class="tab-panel" id="tab-settings">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Settings</h1>
+          <p class="page-subtitle">Configure autofill behaviour</p>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label">Skip Already-Filled Fields</div>
+            <div class="setting-desc">Do not overwrite fields that already contain a value</div>
+          </div>
+          <label class="toggle" id="toggle-skip">
+            <input type="checkbox" id="setting-skip-filled" />
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          </label>
+        </div>
+
+        <div class="setting-divider"></div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label">Show Confirmation Before Filling</div>
+            <div class="setting-desc">Show a brief confirmation step before filling the form</div>
+          </div>
+          <label class="toggle" id="toggle-confirm">
+            <input type="checkbox" id="setting-show-confirmation" />
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          </label>
+        </div>
+
+        <div class="setting-divider"></div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label">Fill Delay</div>
+            <div class="setting-desc">Delay between filling each field (helps with reactive forms)</div>
+          </div>
+          <div class="delay-control">
+            <input type="number" id="setting-fill-delay" class="number-input" min="0" max="1000" step="50" />
+            <span class="delay-unit">ms</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-card danger-zone">
+        <div class="danger-title">Danger Zone</div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label">Clear All Data</div>
+            <div class="setting-desc">Permanently delete all profiles, groups, and settings</div>
+          </div>
+          <button class="btn-danger" id="btn-clear-all">Clear All Data</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Profile Modal ── -->
+  <div class="modal-overlay hidden" id="profile-modal-overlay">
+    <div class="modal" id="profile-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Add Pilgrim Profile</h2>
+        <button class="modal-close" id="modal-close" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form class="modal-form" id="profile-form" novalidate>
+        <input type="hidden" id="form-id" />
+
+        <div class="form-row two-col">
+          <div class="form-group">
+            <label class="form-label" for="form-name">Full Name <span class="required">*</span></label>
+            <input type="text" id="form-name" class="form-input" placeholder="As on ID proof" required />
+            <span class="form-error" id="err-name"></span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="form-age">Age <span class="required">*</span></label>
+            <input type="number" id="form-age" class="form-input" placeholder="e.g. 35" min="1" max="120" required />
+            <span class="form-error" id="err-age"></span>
+          </div>
+        </div>
+
+        <div class="form-row two-col">
+          <div class="form-group">
+            <label class="form-label">Gender <span class="required">*</span></label>
+            <div class="radio-group" id="form-gender">
+              <label class="radio-option"><input type="radio" name="gender" value="Female" /> Female</label>
+              <label class="radio-option"><input type="radio" name="gender" value="Male" /> Male</label>
+              <label class="radio-option"><input type="radio" name="gender" value="Other" /> Transgender</label>
+            </div>
+            <span class="form-error" id="err-gender"></span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="form-group">Family Group</label>
+            <select id="form-group" class="form-input form-select">
+              <option value="">— No Group —</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row two-col">
+          <div class="form-group">
+            <label class="form-label" for="form-id-type">Photo ID Type <span class="required">*</span></label>
+            <select id="form-id-type" class="form-input form-select" required>
+              <option value="">Select ID Type</option>
+              <option value="Aadhaar">Aadhaar Card</option>
+              <option value="Voter ID">Voter ID Card</option>
+              <option value="Passport">Passport</option>
+              <option value="PAN">PAN Card</option>
+              <option value="Driving Licence">Driving Licence</option>
+            </select>
+            <span class="form-error" id="err-id-type"></span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="form-id-number">Photo ID Number <span class="required">*</span></label>
+            <input type="text" id="form-id-number" class="form-input" placeholder="e.g. 1234 5678 9012" required />
+            <span class="form-error" id="err-id-number"></span>
+          </div>
+        </div>
+
+        <div class="form-row two-col">
+          <div class="form-group">
+            <label class="form-label" for="form-mobile">Mobile Number <span class="optional">(optional)</span></label>
+            <input type="tel" id="form-mobile" class="form-input" placeholder="10-digit number" maxlength="10" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="form-email">Email Address <span class="optional">(optional)</span></label>
+            <input type="email" id="form-email" class="form-input" placeholder="name@example.com" />
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="btn-modal-cancel">Cancel</button>
+          <button type="submit" class="btn-primary" id="btn-modal-save">Save Profile</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── Group Modal ── -->
+  <div class="modal-overlay hidden" id="group-modal-overlay">
+    <div class="modal modal-sm" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2 class="modal-title" id="group-modal-title">New Family Group</h2>
+        <button class="modal-close" id="group-modal-close" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-form">
+        <input type="hidden" id="group-form-id" />
+        <div class="form-group">
+          <label class="form-label" for="group-form-name">Group Name</label>
+          <input type="text" id="group-form-name" class="form-input" placeholder="e.g. My Family" />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="btn-group-modal-cancel">Cancel</button>
+          <button type="button" class="btn-primary" id="btn-group-modal-save">Save Group</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Confirm Dialog ── -->
+  <div class="modal-overlay hidden" id="confirm-overlay">
+    <div class="modal modal-sm" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2 class="modal-title" id="confirm-title">Confirm</h2>
+      </div>
+      <div class="modal-form">
+        <p class="confirm-message" id="confirm-message"></p>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="btn-confirm-cancel">Cancel</button>
+          <button type="button" class="btn-danger" id="btn-confirm-ok">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Toast ── -->
+  <div class="toast hidden" id="toast" role="alert" aria-live="polite"></div>
+
+  <script src="options.js" type="module"></script>
+</body>
+</html>

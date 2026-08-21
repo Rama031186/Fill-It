@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TTD Smart Autofill</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header class="popup-header">
+    <div class="header-brand">
+      <img src="../icons/icon48.png" alt="TTD" class="brand-icon" />
+      <div class="brand-text">
+        <span class="brand-name">TTD Smart</span>
+        <span class="brand-sub">Autofill</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="header-btn" id="btn-add-profile-header" title="Add new profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+      <button class="settings-btn" id="btn-settings" title="Manage Profiles">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Status Strip (shown only on non-TTD pages) ── -->
+  <div class="status-strip hidden" id="status-strip-wrong-page">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    Navigate to the TTD booking page to use autofill
+  </div>
+
+  <!-- ── Main Content ── -->
+  <main class="popup-body" id="popup-body">
+
+    <!-- Loading state -->
+    <div class="loading-state" id="loading-state">
+      <div class="spinner"></div>
+      <span>Loading profiles…</span>
+    </div>
+
+    <!-- No profiles state -->
+    <div class="empty-state hidden" id="empty-state">
+      <div class="empty-icon">🙏</div>
+      <p class="empty-text">No profiles saved yet.</p>
+      <p class="empty-sub">Add your pilgrim details in the settings page.</p>
+      <button class="btn-outline" id="btn-add-first">Add Profiles</button>
+    </div>
+
+    <!-- Profiles list -->
+    <div class="hidden" id="profiles-section">
+
+      <div class="section-header">
+        <div class="section-label">Select Pilgrims to Fill</div>
+        <button class="btn-add-inline" id="btn-add-profile-inline" title="Add new profile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          Add Profile
+        </button>
+      </div>
+
+      <!-- ── Mode Toggle Bar ── -->
+      <div class="mode-bar">
+        <button class="mode-pill active" id="mode-btn-group">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="3"/><path d="M2 21c0-3.3 3-6 7-6"/><circle cx="17" cy="7" r="3"/><path d="M22 21c0-3.3-3-6-7-6"/><path d="M9 21h6"/></svg>
+          By Group
+        </button>
+        <button class="mode-pill" id="mode-btn-individual">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          Individual
+        </button>
+      </div>
+
+      <!-- ── Group Fill View ── -->
+      <div id="view-group">
+        <div class="gf-list" id="gf-list">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- ── Individual View ── -->
+      <div id="view-individual" class="hidden">
+        <div class="group-tabs" id="group-tabs">
+          <button class="group-tab active" data-group="">All</button>
+        </div>
+        <div class="profile-list" id="profile-list">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- ── Selection Bar (shared) ── -->
+      <div class="selection-bar" id="selection-bar">
+        <span class="selection-count" id="selection-count">None selected</span>
+        <button class="btn-link" id="btn-select-all">Select All</button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ── Footer with Fill Button ── -->
+  <footer class="popup-footer" id="popup-footer">
+    <button class="btn-fill" id="btn-fill" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M12 20h9"/>
+        <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+      </svg>
+      Fill Details
+    </button>
+  </footer>
+
+  <!-- ── Result Toast ── -->
+  <div class="result-panel hidden" id="result-panel">
+    <div class="result-icon" id="result-icon"></div>
+    <div class="result-text" id="result-text"></div>
+    <div class="result-sub" id="result-sub"></div>
+  </div>
+
+  <script src="popup.js" type="module"></script>
+</body>
+</html>
