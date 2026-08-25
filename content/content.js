@@ -85,8 +85,8 @@ const GENERAL_FIELDS = [
   },
   {
     key:       'email',
-    labelAttr: 'Email Address',
-    names:     ['pilgrimEmail'],
+    labelAttr: 'Email',                       // prefix of both "Email" and "Email Address"
+    names:     ['pilgrimEmail', 'emailId'],   // all observed name= variants
     label:     'Email Address',
     type:      'text',
   },
@@ -178,17 +178,33 @@ async function fillGeneralForm(generalDetails, settings = {}) {
  * as getInputAt(), but returns just the first matching element.
  */
 function getGeneralInput(field) {
-  // Strategy 1: label attribute
+  // Strategy 1a: label attribute — exact CSS selector (fastest)
   if (field.labelAttr) {
     const el = document.querySelector(`input.floating-input[label="${field.labelAttr}"]`);
     if (el && el.type !== 'hidden') return el;
   }
+
+  // Strategy 1b: label attribute — prefix/startsWith match.
+  // Handles cases where the attribute differs by detail:
+  //   labelAttr="Email"  matches  label="Email Address"  (target is prefix of attr)
+  //   labelAttr="Email"  matches  label="Email"          (exact, already handled above)
+  // We scan all floating-inputs looking for one whose label attr shares a prefix with ours.
+  if (field.labelAttr) {
+    const target = field.labelAttr.toLowerCase();
+    for (const el of document.querySelectorAll('input.floating-input')) {
+      if (el.type === 'hidden') continue;
+      const attrVal = (el.getAttribute('label') || '').toLowerCase();
+      if (attrVal && (attrVal.startsWith(target) || target.startsWith(attrVal))) return el;
+    }
+  }
+
   // Strategy 2: name attribute variants
   for (const name of (field.names || [])) {
     const el = document.querySelector(`input.floating-input[name="${name}"]`);
     if (el && el.type !== 'hidden') return el;
   }
-  // Strategy 3: adjacent label text
+
+  // Strategy 3: adjacent label text contains our labelAttr
   if (field.labelAttr) {
     const target = field.labelAttr.toLowerCase();
     for (const el of document.querySelectorAll('input.floating-input')) {
